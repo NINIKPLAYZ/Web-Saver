@@ -5,29 +5,28 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <meta name="theme-color" content="#101522">
-<title>Web Saver</title>
+<title>Website Link Saver</title>
 <style>
 *{box-sizing:border-box}
 body{margin:0;padding:18px 16px 100px;background:#101522;color:white;font-family:Arial,sans-serif}
-header{text-align:center;padding:12px}
+header{text-align:center;padding:14px}
 .logo{font-size:42px}
 h1{color:#65e5bd;margin:8px}
-p{color:#bdc6d8}
 .card{background:#1b2435;padding:16px;border-radius:16px;margin:15px 0}
 input,button{width:100%;padding:12px;margin:7px 0;border:0;border-radius:10px;font-size:15px}
 input{background:#293449;color:white}
 button{background:#65e5bd;color:#101522;font-weight:bold;cursor:pointer}
 .secondary{background:#35435c;color:white}
 .danger{background:#a93f50;color:white}
-#form{display:none}
+#form,#menu{display:none}
 .grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:12px}
-.site{background:#263248;border-radius:15px;padding:14px;text-align:center;min-width:0;overflow-wrap:anywhere;user-select:none;-webkit-user-select:none;touch-action:pan-y}
+.site{background:#263248;border-radius:15px;padding:14px;text-align:center;overflow-wrap:anywhere;user-select:none;-webkit-user-select:none}
 .siteIcon{width:62px;height:62px;border-radius:18px;background:#65e5bd;color:#101522;display:flex;align-items:center;justify-content:center;font-size:30px;margin:0 auto 10px}
-.siteName{font-weight:bold;overflow-wrap:anywhere}
+.siteName{font-weight:bold}
 .siteUrl{font-size:12px;color:#bdc6d8;overflow-wrap:anywhere;margin:8px 0}
 .site button{font-size:13px;padding:10px}
-.hint{font-size:12px;color:#bdc6d8;text-align:center}
-#menu{display:none;position:fixed;z-index:20;left:20px;right:20px;bottom:95px;background:#1b2435;padding:15px;border:1px solid #35435c;border-radius:16px;box-shadow:0 5px 25px #0009}
+.small{font-size:12px;color:#bdc6d8}
+#menu{position:fixed;z-index:5;bottom:95px;left:18px;right:18px;background:#1b2435;padding:16px;border-radius:16px;box-shadow:0 5px 25px #0009}
 #add{position:fixed;right:22px;bottom:22px;width:64px;height:64px;border-radius:50%;font-size:35px;padding:0;box-shadow:0 5px 20px #0008}
 </style>
 </head>
@@ -35,13 +34,13 @@ button{background:#65e5bd;color:#101522;font-weight:bold;cursor:pointer}
 
 <header>
   <div class="logo">🌐</div>
-  <h1>Web Saver</h1>
-  <p>Save and manage your websites</p>
+  <h1>Website Link Saver</h1>
+  <p class="small">Save your favourite website links</p>
 </header>
 
 <section class="card" id="form">
   <h2 id="formTitle">Add Website</h2>
-  <input id="name" placeholder="Website Name">
+  <input id="name" placeholder="Website name (e.g. YouTube)">
   <input id="url" placeholder="Website URL (https://example.com)">
   <button id="save">Save Website</button>
   <button class="secondary" id="cancel">Cancel</button>
@@ -51,30 +50,30 @@ button{background:#65e5bd;color:#101522;font-weight:bold;cursor:pointer}
   <input id="search" placeholder="🔍 Search websites">
   <h2>My Websites</h2>
   <div class="grid" id="grid"></div>
-  <p class="hint">Website icon par long-press karke Edit ya Delete chuno.</p>
+  <p class="small">Website icon ko long-press karke Edit ya Delete chuno.</p>
 </section>
 
-<div id="menu">
-  <p id="menuName"></p>
-  <button id="open">Open Website</button>
+<section id="menu">
+  <h3 id="menuTitle">Website Options</h3>
+  <button id="open">🌐 Open Website</button>
   <button id="edit">✏️ Edit Name / URL</button>
   <button class="danger" id="delete">🗑 Delete Website</button>
   <button class="secondary" id="closeMenu">Cancel</button>
-</div>
+</section>
 
 <button id="add" aria-label="Add website">+</button>
 
 <script>
 "use strict";
 
-const KEY = "web_saver_sites_v3";
+const KEY = "website_link_saver_v1";
 const $ = id => document.getElementById(id);
 let editingId = null;
 let selectedId = null;
 let pressTimer = null;
 let longPressed = false;
 
-function load(){
+function getSites(){
   try {
     const data = JSON.parse(localStorage.getItem(KEY) || "[]");
     return Array.isArray(data) ? data : [];
@@ -83,32 +82,32 @@ function load(){
   }
 }
 
-function persist(items){
+function saveSites(sites){
   try {
-    localStorage.setItem(KEY, JSON.stringify(items));
+    localStorage.setItem(KEY, JSON.stringify(sites));
     return true;
   } catch(e) {
-    alert("Storage full hai. Kuch websites delete karke try karo.");
+    alert("Storage full hai. Kuch links delete karke try karo.");
     return false;
   }
 }
 
-function makeId(){
+function newId(){
   return Date.now().toString(36) + Math.random().toString(36).slice(2);
 }
 
-function showForm(item = null){
-  editingId = item ? item.id : null;
-  $("formTitle").textContent = item ? "Edit Website" : "Add Website";
-  $("name").value = item ? item.name : "";
-  $("url").value = item ? item.url : "";
+function showForm(site = null){
+  editingId = site ? site.id : null;
+  $("formTitle").textContent = site ? "Edit Website" : "Add Website";
+  $("name").value = site ? site.name : "";
+  $("url").value = site ? site.url : "";
   $("form").style.display = "block";
   $("menu").style.display = "none";
   $("form").scrollIntoView({behavior:"smooth",block:"start"});
-  $("name").focus();
 }
 
 $("add").onclick = () => showForm();
+
 $("cancel").onclick = () => {
   $("form").style.display = "none";
   editingId = null;
@@ -119,7 +118,7 @@ $("save").onclick = () => {
   let url = $("url").value.trim();
 
   if(!name || !url){
-    alert("Website name aur URL dono bharo.");
+    alert("Website ka naam aur URL dono bharo.");
     return;
   }
 
@@ -127,24 +126,24 @@ $("save").onclick = () => {
 
   try {
     const parsed = new URL(url);
-    if(!["http:","https:"].includes(parsed.protocol)) throw Error();
+    if(!["https:","http:"].includes(parsed.protocol)) throw Error();
     url = parsed.href;
   } catch(e) {
     alert("Valid website URL daalo.");
     return;
   }
 
-  const sites = load();
+  const sites = getSites();
 
   if(editingId){
-    const index = sites.findIndex(s => s.id === editingId);
-    if(index < 0) return;
-    sites[index] = {...sites[index],name,url};
+    const i = sites.findIndex(s => s.id === editingId);
+    if(i < 0) return;
+    sites[i] = {...sites[i],name,url};
   } else {
-    sites.unshift({id:makeId(),name,url});
+    sites.unshift({id:newId(),name,url});
   }
 
-  if(persist(sites)){
+  if(saveSites(sites)){
     $("form").style.display = "none";
     editingId = null;
     render();
@@ -152,29 +151,31 @@ $("save").onclick = () => {
 };
 
 function showMenu(id){
-  const site = load().find(s => s.id === id);
+  const site = getSites().find(s => s.id === id);
   if(!site) return;
   selectedId = id;
-  $("menuName").textContent = site.name;
+  $("menuTitle").textContent = site.name;
   $("menu").style.display = "block";
 }
 
-$("closeMenu").onclick = () => $("menu").style.display = "none";
+$("closeMenu").onclick = () => {
+  $("menu").style.display = "none";
+};
 
 $("open").onclick = () => {
-  const site = load().find(s => s.id === selectedId);
+  const site = getSites().find(s => s.id === selectedId);
   if(site) window.open(site.url,"_blank","noopener,noreferrer");
   $("menu").style.display = "none";
 };
 
 $("edit").onclick = () => {
-  const site = load().find(s => s.id === selectedId);
+  const site = getSites().find(s => s.id === selectedId);
   if(site) showForm(site);
 };
 
 $("delete").onclick = () => {
-  if(!confirm("Ye website delete karni hai?")) return;
-  if(persist(load().filter(s => s.id !== selectedId))){
+  if(!confirm("Is website ko delete karna hai?")) return;
+  if(saveSites(getSites().filter(s => s.id !== selectedId))){
     $("menu").style.display = "none";
     render();
   }
@@ -184,13 +185,16 @@ function render(){
   const grid = $("grid");
   grid.replaceChildren();
   const q = $("search").value.trim().toLowerCase();
-  const sites = load().filter(s =>
-    s.name.toLowerCase().includes(q) || s.url.toLowerCase().includes(q)
+
+  const sites = getSites().filter(s =>
+    s.name.toLowerCase().includes(q) ||
+    s.url.toLowerCase().includes(q)
   );
 
   if(!sites.length){
     const p = document.createElement("p");
-    p.textContent = "Abhi koi website saved nahi hai. + dabao.";
+    p.className = "small";
+    p.textContent = "Koi website saved nahi hai. + button dabao.";
     p.style.gridColumn = "1 / -1";
     grid.appendChild(p);
     return;
@@ -200,7 +204,6 @@ function render(){
     const box = document.createElement("div");
     box.className = "site";
     box.tabIndex = 0;
-    box.setAttribute("aria-label",site.name + ". Long press for options.");
 
     const icon = document.createElement("div");
     icon.className = "siteIcon";
@@ -210,15 +213,16 @@ function render(){
     title.className = "siteName";
     title.textContent = site.name;
 
-    const link = document.createElement("div");
-    link.className = "siteUrl";
-    link.textContent = site.url;
+    const url = document.createElement("div");
+    url.className = "siteUrl";
+    url.textContent = site.url;
 
     const openBtn = document.createElement("button");
-    openBtn.textContent = "Open";
-    openBtn.onclick = () => window.open(site.url,"_blank","noopener,noreferrer");
+    openBtn.textContent = "Open Website";
+    openBtn.onclick = () =>
+      window.open(site.url,"_blank","noopener,noreferrer");
 
-    box.append(icon,title,link,openBtn);
+    box.append(icon,title,url,openBtn);
 
     box.addEventListener("contextmenu", e => {
       e.preventDefault();
@@ -231,7 +235,7 @@ function render(){
       pressTimer = setTimeout(() => {
         longPressed = true;
         showMenu(site.id);
-      },600);
+      },650);
     });
 
     ["pointerup","pointerleave","pointercancel"].forEach(event => {
@@ -258,5 +262,4 @@ $("search").addEventListener("input",render);
 render();
 </script>
 </body>
-  </html>
-  
+</html>
