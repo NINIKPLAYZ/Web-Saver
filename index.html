@@ -3,237 +3,378 @@
 <html lang="en">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1">
-<meta name="theme-color" content="#101522">
-<title>Web Saver</title>
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>My Browser</title>
 <style>
 *{box-sizing:border-box}
-body{margin:0;background:#101522;color:white;font-family:Arial,sans-serif;min-height:100vh;padding:18px 16px 100px}
-header{display:flex;align-items:center;gap:12px;margin:12px 0 22px}
-.brand{width:48px;height:48px;border-radius:15px;background:#65e5bd;color:#101522;display:grid;place-items:center;font-size:27px}
-h1{font-size:24px;margin:0}
-.sub{color:#aebbd0;font-size:13px;margin-top:5px}
-.search{width:100%;padding:14px;border:1px solid #303b50;border-radius:14px;background:#1b2435;color:white;font-size:16px;outline:none}
-h2{font-size:17px;margin:25px 0 18px}
-.grid{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:22px 8px}
-.app{text-align:center;min-width:0;user-select:none;-webkit-user-select:none;touch-action:pan-y}
-.appicon{width:min(64px,17vw);height:min(64px,17vw);margin:auto;border-radius:20px;background:#27354a;display:grid;place-items:center;font-size:30px;overflow:hidden;border:1px solid #ffffff12}
-.appicon img{width:100%;height:100%;object-fit:cover}
-.appname{font-size:12px;margin-top:8px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
-.empty{grid-column:1/-1;text-align:center;color:#aebbd0;padding:30px 5px;line-height:1.6}
-.fab{position:fixed;right:22px;bottom:25px;width:62px;height:62px;border-radius:50%;border:0;background:#65e5bd;color:#101522;font-size:34px;box-shadow:0 6px 25px #0008}
-.overlay{display:none;position:fixed;inset:0;background:#0009;z-index:5;align-items:flex-end}
-.panel{background:#1b2435;padding:22px;border-radius:22px 22px 0 0;width:100%;max-height:85vh;overflow:auto}
-input,button{font:inherit}
-.field{display:block;width:100%;padding:13px;margin:10px 0;background:#293449;color:white;border:1px solid #3a4960;border-radius:10px}
-.action{display:block;width:100%;padding:13px;border:0;border-radius:10px;margin:9px 0;background:#65e5bd;color:#101522;font-weight:bold}
-.secondary{background:#35435c;color:white}
-.danger{background:#a93f50;color:white}
-.note{font-size:12px;color:#aebbd0;line-height:1.5}
+body{
+  margin:0;font-family:Arial,sans-serif;color:#202124;
+  background:#f1f3f4 center/cover fixed no-repeat;
+  min-height:100vh;
+}
+.toolbar{
+  height:60px;background:#1688ed;color:white;
+  display:flex;align-items:center;gap:8px;padding:0 10px;
+  position:sticky;top:0;z-index:5;
+}
+.address{
+  display:flex;align-items:center;gap:8px;flex:1;min-width:0;
+  background:#ffffff25;border-radius:25px;padding:10px;
+}
+.address input{
+  width:100%;min-width:0;border:0;outline:0;
+  background:transparent;color:white;font-size:15px;
+}
+.address input::placeholder{color:#eaf5ff}
+.tool{
+  background:transparent;color:white;border:0;
+  font-size:24px;padding:7px;cursor:pointer;
+}
+.menu{
+  display:none;position:fixed;right:8px;top:55px;
+  width:220px;background:white;color:#222;
+  box-shadow:0 4px 16px #0003;border-radius:8px;
+  z-index:20;padding:6px 0;
+}
+.menu.show{display:block}
+.menu button{
+  width:100%;padding:14px 16px;border:0;
+  background:white;text-align:left;font-size:15px;
+}
+.menu button:active{background:#eee}
+.home{padding:45px 12px 25px}
+.google{
+  text-align:center;font-size:46px;font-weight:500;
+  letter-spacing:-3px;margin-bottom:24px;
+}
+.google span:nth-child(1),.google span:nth-child(4){color:#4285f4}
+.google span:nth-child(2),.google span:nth-child(6){color:#ea4335}
+.google span:nth-child(3){color:#fbbc05}
+.google span:nth-child(5){color:#34a853}
+.search{
+  max-width:580px;margin:0 auto 35px;background:white;
+  border-radius:28px;padding:0 16px;display:flex;
+  align-items:center;gap:10px;height:52px;
+  box-shadow:0 2px 8px #0002;
+}
+.search input{
+  border:0;outline:0;flex:1;min-width:0;font-size:16px;
+}
+.search button{border:0;background:white;font-size:20px;cursor:pointer}
+.grid{
+  display:grid;grid-template-columns:repeat(4,minmax(0,1fr));
+  gap:24px 4px;max-width:650px;margin:auto;
+}
+.site{
+  display:flex;align-items:center;flex-direction:column;
+  gap:8px;background:transparent;border:0;min-width:0;
+  cursor:pointer;color:inherit;
+}
+.siteIcon{
+  width:60px;height:60px;border-radius:17px;
+  display:flex;align-items:center;justify-content:center;
+  font-size:30px;font-weight:bold;color:white;
+  box-shadow:0 1px 5px #0002;overflow:hidden;
+}
+.siteIcon img{width:100%;height:100%;object-fit:cover}
+.siteName{
+  font-size:13px;text-shadow:0 1px 3px #fff;
+  max-width:100%;overflow:hidden;text-overflow:ellipsis;
+  white-space:nowrap;
+}
+.dialogBg{
+  display:none;position:fixed;inset:0;background:#0006;
+  z-index:30;align-items:center;justify-content:center;padding:20px;
+}
+.dialogBg.show{display:flex}
+.dialog{width:100%;max-width:350px;background:white;
+  padding:22px;border-radius:14px;color:#222}
+.dialog h3{margin-top:0}
+.dialog input{
+  width:100%;padding:12px;margin:8px 0;
+  border:1px solid #ccc;border-radius:7px;font-size:16px;
+}
+.actions{display:flex;justify-content:flex-end;gap:10px;margin-top:12px}
+.actions button{border:0;padding:10px 15px;border-radius:6px;cursor:pointer}
+.primary{background:#1688ed!important;color:white}
+@media(max-width:360px){
+  .siteIcon{width:52px;height:52px}
+  .google{font-size:40px}
+}
 </style>
 </head>
 <body>
-<header>
-  <div class="brand">🌐</div>
-  <div>
-    <h1>Web Saver</h1>
-    <div class="sub">Your favourite websites in one place</div>
+
+<header class="toolbar">
+  <div class="address">
+    <span>⌕</span>
+    <input id="urlBar" placeholder="Search or type URL">
   </div>
+  <button class="tool" id="refreshBtn" title="Refresh">↻</button>
+  <button class="tool" id="menuBtn" title="Menu">⋮</button>
 </header>
 
-<input class="search" id="search" placeholder="🔍 Search apps and websites">
-
-<h2>My Apps</h2>
-<div class="grid" id="grid"></div>
-
-<button class="fab" id="add" aria-label="Add website">+</button>
-
-<div class="overlay" id="overlay">
-  <div class="panel">
-    <h2 id="panelTitle" style="margin-top:0">Add Website</h2>
-    <input class="field" id="siteName" placeholder="Website name (e.g. YouTube)">
-    <input class="field" id="siteUrl" placeholder="Website URL (https://example.com)">
-    <input class="field" id="siteIcon" placeholder="Icon emoji (e.g. ▶️)" maxlength="8">
-    <button class="action" id="save">Save Website</button>
-    <button class="action secondary" id="cancel">Cancel</button>
-    <p class="note">Tip: Website ka naam, link aur apni pasand ka emoji icon add karo.</p>
-  </div>
+<div class="menu" id="menu">
+  <button id="addBtn">＋ Add Website</button>
+  <button id="wallpaperBtn">▧ Set Wallpaper</button>
+  <button id="resetWallpaper">✕ Remove Wallpaper</button>
+  <button id="settingsBtn">⚙ Settings</button>
 </div>
 
-<div class="overlay" id="options">
-  <div class="panel">
-    <h2 id="optionName" style="margin-top:0">Website Options</h2>
-    <button class="action" id="open">Open Website</button>
-    <button class="action" id="edit">✏️ Edit Name / URL / Icon</button>
-    <button class="action danger" id="remove">Delete Website</button>
-    <button class="action secondary" id="closeOptions">Cancel</button>
+<main class="home">
+  <div class="google" aria-label="Google">
+    <span>G</span><span>o</span><span>o</span>
+    <span>g</span><span>l</span><span>e</span>
+  </div>
+
+  <form class="search" id="searchForm">
+    <span>🔍</span>
+    <input id="googleSearch" placeholder="Search Google or type a URL">
+    <button type="submit" aria-label="Search">➜</button>
+  </form>
+
+  <div class="grid" id="grid"></div>
+</main>
+
+<input type="file" id="wallpaperFile" accept="image/*" hidden>
+
+<div class="dialogBg" id="dialogBg">
+  <div class="dialog">
+    <h3 id="dialogTitle">Add Website</h3>
+    <input id="siteName" placeholder="Website name">
+    <input id="siteUrl" placeholder="Website URL">
+    <input id="siteIconInput" placeholder="Icon emoji (optional)">
+    <div class="actions">
+      <button id="cancelBtn">Cancel</button>
+      <button class="primary" id="saveBtn">Save</button>
+    </div>
   </div>
 </div>
 
 <script>
-"use strict";
-const KEY = "web_saver_launcher_v1";
-const $ = id => document.getElementById(id);
-let editing = null, selected = null, pressTimer = null, longPressed = false;
+const defaults=[
+ {name:"Google",url:"https://google.com",icon:"G",color:"#4285f4"},
+ {name:"Amazon",url:"https://amazon.com",icon:"a",color:"#111111"},
+ {name:"Reddit",url:"https://reddit.com",icon:"👽",color:"#ffffff",textColor:"#333"},
+ {name:"Vimeo",url:"https://vimeo.com",icon:"v",color:"#19a4dc"},
+ {name:"Instagram",url:"https://instagram.com",icon:"📸",color:"#c13584"},
+ {name:"Facebook",url:"https://facebook.com",icon:"f",color:"#3159b8"},
+ {name:"Twitter",url:"https://x.com",icon:"𝕏",color:"#111111"},
+ {name:"Pinterest",url:"https://pinterest.com",icon:"P",color:"#bd081c"},
+ {name:"LinkedIn",url:"https://linkedin.com",icon:"in",color:"#0878a8"},
+ {name:"YouTube",url:"https://youtube.com",icon:"▶",color:"#ff0033"}
+];
 
-function load(){
-  try {
-    const a = JSON.parse(localStorage.getItem(KEY) || "[]");
-    return Array.isArray(a) ? a : [];
-  } catch(e) { return []; }
+function read(key,fallback){
+  try{
+    const value=localStorage.getItem(key);
+    return value===null?fallback:JSON.parse(value);
+  }catch(e){return fallback}
 }
-function persist(a){
-  try {
-    localStorage.setItem(KEY, JSON.stringify(a));
-    return true;
-  } catch(e) {
-    alert("Browser storage full hai.");
-    return false;
-  }
-}
-function uid(){
-  return Date.now().toString(36) + Math.random().toString(36).slice(2);
-}
-function showForm(site=null){
-  editing = site ? site.id : null;
-  $("panelTitle").textContent = site ? "Edit Website" : "Add Website";
-  $("siteName").value = site ? site.name : "";
-  $("siteUrl").value = site ? site.url : "";
-  $("siteIcon").value = site ? site.icon : "🌐";
-  $("options").style.display = "none";
-  $("overlay").style.display = "flex";
-}
-function hideForm(){
-  $("overlay").style.display = "none";
-  editing = null;
-}
-$("add").onclick = () => showForm();
-$("cancel").onclick = hideForm;
-$("overlay").addEventListener("click",e=>{
-  if(e.target === $("overlay")) hideForm();
-});
 
-$("save").onclick = () => {
-  const name = $("siteName").value.trim();
-  let url = $("siteUrl").value.trim();
-  const icon = $("siteIcon").value.trim() || "🌐";
+let sites=read("myBrowserSites",defaults);
+let editIndex=-1;
 
-  if(!name || !url){
-    alert("Website name aur URL dono bharo.");
-    return;
-  }
-  if(!/^https?:\/\//i.test(url)) url = "https://" + url;
+const $=id=>document.getElementById(id);
+const menu=$("menu");
+const dialogBg=$("dialogBg");
 
-  try {
-    const u = new URL(url);
-    if(!["http:","https:"].includes(u.protocol)) throw Error();
-    url = u.href;
-  } catch(e) {
-    alert("Valid website URL daalo.");
-    return;
-  }
-
-  const sites = load();
-  if(editing){
-    const i = sites.findIndex(s=>s.id===editing);
-    if(i<0) return;
-    sites[i] = {...sites[i],name,url,icon};
-  } else {
-    sites.unshift({id:uid(),name,url,icon});
-  }
-  if(persist(sites)){
-    hideForm();
-    render();
-  }
-};
-
-function showOptions(id){
-  const site = load().find(s=>s.id===id);
-  if(!site) return;
-  selected = id;
-  $("optionName").textContent = site.name;
-  $("options").style.display = "flex";
+function saveSites(){
+  try{localStorage.setItem("myBrowserSites",JSON.stringify(sites))}
+  catch(e){alert("Storage full. Kuch websites remove karo.")}
 }
-$("closeOptions").onclick = ()=>$("options").style.display="none";
-$("options").addEventListener("click",e=>{
-  if(e.target === $("options")) $("options").style.display="none";
-});
-$("open").onclick = ()=>{
-  const s=load().find(x=>x.id===selected);
-  if(s) window.open(s.url,"_blank","noopener,noreferrer");
-  $("options").style.display="none";
-};
-$("edit").onclick = ()=>{
-  const s=load().find(x=>x.id===selected);
-  if(s) showForm(s);
-};
-$("remove").onclick = ()=>{
-  if(!confirm("Website delete karni hai?")) return;
-  if(persist(load().filter(s=>s.id!==selected))) render();
-  $("options").style.display="none";
-};
 
 function render(){
-  const grid=$("grid");
-  grid.replaceChildren();
-  const q=$("search").value.toLowerCase().trim();
-  const sites=load().filter(s=>
-    s.name.toLowerCase().includes(q)||s.url.toLowerCase().includes(q)
-  );
-  if(!sites.length){
-    const d=document.createElement("div");
-    d.className="empty";
-    d.textContent="Abhi koi website nahi hai. + dabao aur apni pehli website add karo.";
-    grid.appendChild(d);
-    return;
-  }
-  sites.forEach(site=>{
-    const box=document.createElement("div");
-    box.className="app";
-    box.tabIndex=0;
-    box.setAttribute("aria-label",site.name+"; long press for options");
+  $("grid").innerHTML="";
+  sites.forEach((site,index)=>{
+    const card=document.createElement("button");
+    card.className="site";
+    card.title=site.name;
 
-    const icon=document.createElement("div");
-    icon.className="appicon";
-    icon.textContent=site.icon||"🌐";
-    const name=document.createElement("div");
-    name.className="appname";
-    name.textContent=site.name;
-    box.append(icon,name);
+    const icon=document.createElement("span");
+    icon.className="siteIcon";
+    icon.style.background=site.color||"#4285f4";
+    icon.style.color=site.textColor||"#fff";
 
-    box.addEventListener("pointerdown",()=>{
-      longPressed=false;
-      clearTimeout(pressTimer);
-      pressTimer=setTimeout(()=>{
-        longPressed=true;
-        showOptions(site.id);
-      },600);
-    });
-    ["pointerup","pointerleave","pointercancel"].forEach(ev=>
-      box.addEventListener(ev,()=>clearTimeout(pressTimer))
-    );
-    box.addEventListener("contextmenu",e=>{
+    if(site.icon && /^https?:\/\//i.test(site.icon)){
+      const img=document.createElement("img");
+      img.src=site.icon;img.alt="";
+      icon.appendChild(img);
+    }else{
+      icon.textContent=site.icon||site.name.charAt(0).toUpperCase();
+    }
+
+    const label=document.createElement("span");
+    label.className="siteName";
+    label.textContent=site.name;
+    card.append(icon,label);
+
+    card.onclick=()=>openSite(site.url);
+
+    card.oncontextmenu=e=>{
       e.preventDefault();
-      showOptions(site.id);
-    });
-    box.addEventListener("click",e=>{
-      if(longPressed){
-        e.preventDefault();
-        e.stopPropagation();
-        longPressed=false;
-        return;
+      const action=prompt(
+        site.name+"\n1 = Open\n2 = Edit\n3 = Delete"
+      );
+      if(action==="1")openSite(site.url);
+      if(action==="2")openDialog(index);
+      if(action==="3"&&confirm("Delete "+site.name+"?")){
+        sites.splice(index,1);
+        saveSites();render();
       }
-      window.open(site.url,"_blank","noopener,noreferrer");
-    });
-    box.addEventListener("keydown",e=>{
-      if(e.key==="Enter") window.open(site.url,"_blank","noopener,noreferrer");
-      if(e.key==="ContextMenu") showOptions(site.id);
-    });
-    grid.appendChild(box);
+    };
+    $("grid").appendChild(card);
   });
 }
-$("search").addEventListener("input",render);
+
+function normalizeUrl(value){
+  value=value.trim();
+  if(!value)return null;
+  if(!/^https?:\/\//i.test(value)){
+    if(!value.includes(" ")&&value.includes(".")){
+      value="https://"+value;
+    }else{
+      return "https://www.google.com/search?q="+encodeURIComponent(value);
+    }
+  }
+  try{
+    const u=new URL(value);
+    if(u.protocol==="http:"||u.protocol==="https:")return u.href;
+  }catch(e){}
+  return null;
+}
+
+function openSite(value){
+  const url=normalizeUrl(value);
+  if(url)window.open(url,"_blank","noopener");
+  else alert("Valid website URL enter karo.");
+}
+
+function searchGoogle(value){
+  value=value.trim();
+  if(!value)return;
+  if(!value.includes(" ")&&
+     (/^https?:\/\//i.test(value)||/^[\w-]+\.[a-z]{2,}/i.test(value))){
+    openSite(value);
+  }else{
+    window.open(
+      "https://www.google.com/search?q="+encodeURIComponent(value),
+      "_blank","noopener"
+    );
+  }
+}
+
+$("searchForm").onsubmit=e=>{
+  e.preventDefault();
+  searchGoogle($("googleSearch").value);
+};
+
+$("urlBar").addEventListener("keydown",e=>{
+  if(e.key==="Enter"){
+    e.preventDefault();
+    searchGoogle($("urlBar").value);
+  }
+});
+
+$("refreshBtn").onclick=()=>{
+  $("urlBar").value="";
+  $("googleSearch").value="";
+  render();
+};
+
+$("menuBtn").onclick=()=>menu.classList.toggle("show");
+
+function openDialog(index=-1){
+  editIndex=index;
+  $("dialogTitle").textContent=index<0?"Add Website":"Edit Website";
+  const site=index<0?{name:"",url:"",icon:""}:sites[index];
+  $("siteName").value=site.name;
+  $("siteUrl").value=site.url;
+  $("siteIconInput").value=site.icon||"";
+  dialogBg.classList.add("show");
+  menu.classList.remove("show");
+}
+
+$("addBtn").onclick=()=>openDialog();
+
+$("cancelBtn").onclick=()=>dialogBg.classList.remove("show");
+
+$("saveBtn").onclick=()=>{
+  const name=$("siteName").value.trim();
+  const url=normalizeUrl($("siteUrl").value);
+  const icon=$("siteIconInput").value.trim();
+
+  if(!name||!url){
+    alert("Website name aur valid URL dono bharo.");
+    return;
+  }
+
+  const site={
+    name,
+    url,
+    icon:icon||name.charAt(0).toUpperCase(),
+    color:"#4285f4"
+  };
+
+  if(editIndex<0)sites.push(site);
+  else sites[editIndex]=site;
+
+  saveSites();render();
+  dialogBg.classList.remove("show");
+};
+
+$("wallpaperBtn").onclick=()=>{
+  menu.classList.remove("show");
+  $("wallpaperFile").click();
+};
+
+$("wallpaperFile").onchange=e=>{
+  const file=e.target.files[0];
+  if(!file)return;
+  if(!file.type.startsWith("image/")){
+    alert("Image file select karo.");
+    return;
+  }
+
+  const reader=new FileReader();
+  reader.onload=()=>{
+    try{
+      localStorage.setItem("myBrowserWallpaper",reader.result);
+      applyWallpaper(reader.result);
+    }catch(err){
+      alert("Image bahut badi hai. Chhoti image select karo.");
+    }
+  };
+  reader.readAsDataURL(file);
+  e.target.value="";
+};
+
+function applyWallpaper(data){
+  document.body.style.backgroundImage=data?
+    'url("'+data+'")':"none";
+  if(!data)document.body.style.backgroundColor="#f1f3f4";
+}
+
+$("resetWallpaper").onclick=()=>{
+  localStorage.removeItem("myBrowserWallpaper");
+  applyWallpaper("");
+  menu.classList.remove("show");
+};
+
+$("settingsBtn").onclick=()=>{
+  menu.classList.remove("show");
+  alert("Websites aur wallpaper isi browser mein save hote hain.");
+};
+
+document.addEventListener("click",e=>{
+  if(!menu.contains(e.target)&&e.target!==$("menuBtn")){
+    menu.classList.remove("show");
+  }
+});
+
+applyWallpaper(localStorage.getItem("myBrowserWallpaper"));
 render();
 </script>
 </body>
-</html>
+  </html>
+  
