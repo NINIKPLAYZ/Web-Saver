@@ -4,12 +4,17 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <meta name="theme-color" content="#1688ed">
+<meta name="msapplication-navbutton-color" content="#1688ed">
 <meta name="mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
 <title>My Browser</title>
+<link rel="manifest" href="manifest.json">
+<link rel="icon" href="icon-192.png">
+<link rel="apple-touch-icon" href="icon-192.png">
 <style>
 *{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+html{background:#1688ed}
 html,body{margin:0;padding:0;width:100%;height:100%}
 body{
   font-family:Arial,sans-serif;color:#202124;
@@ -113,7 +118,6 @@ body{
   <button id="addBtn">＋ Add Website</button>
   <button id="wallpaperBtn">▧ Set Wallpaper</button>
   <button id="resetWallpaper">✕ Remove Wallpaper</button>
-  <button id="fullBtn">⛶ Full Screen</button>
   <button id="settingsBtn">⚙ Settings</button>
 </div>
 
@@ -437,24 +441,6 @@ $("resetWallpaper").onclick=()=>{
   menu.classList.remove("show");
 };
 
-// Full screen
-function goFull(){
-  const el=document.documentElement;
-  const fn=el.requestFullscreen||el.webkitRequestFullscreen||el.msRequestFullscreen;
-  if(fn&&!document.fullscreenElement&&!document.webkitFullscreenElement){
-    try{
-      const p=fn.call(el,{navigationUI:"hide"});
-      if(p&&p.catch)p.catch(()=>{});
-    }catch(e){}
-  }
-}
-$("fullBtn").onclick=()=>{menu.classList.remove("show");goFull()};
-
-let triedFull=false;
-document.addEventListener("click",()=>{
-  if(!triedFull){triedFull=true;goFull()}
-},{once:true});
-
 $("settingsBtn").onclick=()=>{
   menu.classList.remove("show");
   alert("Websites aur wallpaper isi browser mein save hote hain.\nWebsite ko edit/remove karne ke liye uspe long press karo.");
@@ -468,6 +454,13 @@ document.addEventListener("click",e=>{
 
 try{applyWallpaper(localStorage.getItem("myBrowserWallpaper"))}catch(e){}
 render();
+
+// Web app (PWA) register
+if("serviceWorker" in navigator){
+  window.addEventListener("load",()=>{
+    navigator.serviceWorker.register("sw.js").catch(()=>{});
+  });
+}
 </script>
 </body>
   </html>
