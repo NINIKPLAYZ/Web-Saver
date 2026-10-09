@@ -1,20 +1,29 @@
-
 <!DOCTYPE html>
 <html lang="en">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="theme-color" content="#1688ed">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
 <title>My Browser</title>
 <style>
-*{box-sizing:border-box}
+*{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+html,body{margin:0;padding:0;width:100%;height:100%}
 body{
-  margin:0;font-family:Arial,sans-serif;color:#202124;
+  font-family:Arial,sans-serif;color:#202124;
   background:#f1f3f4 center/cover fixed no-repeat;
-  min-height:100vh;
+  min-height:100vh;min-height:100dvh;
+  -webkit-user-select:none;user-select:none;
+  -webkit-touch-callout:none;
+  overflow-x:hidden;
 }
 .toolbar{
-  height:60px;background:#1688ed;color:white;
-  display:flex;align-items:center;gap:8px;padding:0 10px;
+  background:#1688ed;color:white;
+  display:flex;align-items:center;gap:8px;
+  padding:env(safe-area-inset-top,0px) 10px 0;
+  height:calc(60px + env(safe-area-inset-top,0px));
   position:sticky;top:0;z-index:5;
 }
 .address{
@@ -24,43 +33,26 @@ body{
 .address input{
   width:100%;min-width:0;border:0;outline:0;
   background:transparent;color:white;font-size:15px;
+  -webkit-user-select:text;user-select:text;
 }
 .address input::placeholder{color:#eaf5ff}
-.tool{
-  background:transparent;color:white;border:0;
-  font-size:24px;padding:7px;cursor:pointer;
-}
+.tool{background:transparent;color:white;border:0;font-size:24px;padding:7px;cursor:pointer}
 .menu{
-  display:none;position:fixed;right:8px;top:55px;
+  display:none;position:fixed;right:8px;
+  top:calc(55px + env(safe-area-inset-top,0px));
   width:220px;background:white;color:#222;
   box-shadow:0 4px 16px #0003;border-radius:8px;
   z-index:20;padding:6px 0;
 }
 .menu.show{display:block}
-.menu button{
-  width:100%;padding:14px 16px;border:0;
-  background:white;text-align:left;font-size:15px;
-}
+.menu button{width:100%;padding:14px 16px;border:0;background:white;text-align:left;font-size:15px;color:#222}
 .menu button:active{background:#eee}
-.home{padding:45px 12px 25px}
-.google{
-  text-align:center;font-size:46px;font-weight:500;
-  letter-spacing:-3px;margin-bottom:24px;
-}
+.home{padding:45px 12px 40px}
+.google{text-align:center;font-size:46px;font-weight:500;letter-spacing:-3px;margin-bottom:34px}
 .google span:nth-child(1),.google span:nth-child(4){color:#4285f4}
 .google span:nth-child(2),.google span:nth-child(6){color:#ea4335}
 .google span:nth-child(3){color:#fbbc05}
 .google span:nth-child(5){color:#34a853}
-.search{
-  max-width:580px;margin:0 auto 35px;background:white;
-  border-radius:28px;padding:0 16px;display:flex;
-  align-items:center;gap:10px;height:52px;
-  box-shadow:0 2px 8px #0002;
-}
-.search input{
-  border:0;outline:0;flex:1;min-width:0;font-size:16px;
-}
-.search button{border:0;background:white;font-size:20px;cursor:pointer}
 .grid{
   display:grid;grid-template-columns:repeat(4,minmax(0,1fr));
   gap:24px 4px;max-width:650px;margin:auto;
@@ -69,34 +61,37 @@ body{
   display:flex;align-items:center;flex-direction:column;
   gap:8px;background:transparent;border:0;min-width:0;
   cursor:pointer;color:inherit;
+  -webkit-touch-callout:none;
 }
+.site:active{opacity:.7}
 .siteIcon{
-  width:60px;height:60px;border-radius:17px;
+  width:60px;height:60px;border-radius:17px;background:#fff;
   display:flex;align-items:center;justify-content:center;
-  font-size:30px;font-weight:bold;color:white;
+  font-size:30px;font-weight:bold;color:#4285f4;
   box-shadow:0 1px 5px #0002;overflow:hidden;
 }
-.siteIcon img{width:100%;height:100%;object-fit:cover}
+.siteIcon img{width:70%;height:70%;object-fit:contain;pointer-events:none}
 .siteName{
-  font-size:13px;text-shadow:0 1px 3px #fff;
-  max-width:100%;overflow:hidden;text-overflow:ellipsis;
-  white-space:nowrap;
+  font-size:13px;color:#fff;text-shadow:0 1px 3px #000;
+  max-width:100%;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;
 }
 .dialogBg{
   display:none;position:fixed;inset:0;background:#0006;
   z-index:30;align-items:center;justify-content:center;padding:20px;
 }
 .dialogBg.show{display:flex}
-.dialog{width:100%;max-width:350px;background:white;
-  padding:22px;border-radius:14px;color:#222}
+.dialog{width:100%;max-width:350px;background:white;padding:22px;border-radius:14px;color:#222}
 .dialog h3{margin-top:0}
 .dialog input{
-  width:100%;padding:12px;margin:8px 0;
-  border:1px solid #ccc;border-radius:7px;font-size:16px;
+  width:100%;padding:12px;margin:8px 0;border:1px solid #ccc;border-radius:7px;font-size:16px;
+  -webkit-user-select:text;user-select:text;
 }
 .actions{display:flex;justify-content:flex-end;gap:10px;margin-top:12px}
-.actions button{border:0;padding:10px 15px;border-radius:6px;cursor:pointer}
+.actions button{border:0;padding:10px 15px;border-radius:6px;cursor:pointer;background:#eee;font-size:15px}
 .primary{background:#1688ed!important;color:white}
+.danger{background:#e53935!important;color:white}
+.sheet{display:flex;flex-direction:column;gap:8px;margin-top:10px}
+.sheet button{width:100%;padding:14px;font-size:16px}
 @media(max-width:360px){
   .siteIcon{width:52px;height:52px}
   .google{font-size:40px}
@@ -118,6 +113,7 @@ body{
   <button id="addBtn">＋ Add Website</button>
   <button id="wallpaperBtn">▧ Set Wallpaper</button>
   <button id="resetWallpaper">✕ Remove Wallpaper</button>
+  <button id="fullBtn">⛶ Full Screen</button>
   <button id="settingsBtn">⚙ Settings</button>
 </div>
 
@@ -126,24 +122,17 @@ body{
     <span>G</span><span>o</span><span>o</span>
     <span>g</span><span>l</span><span>e</span>
   </div>
-
-  <form class="search" id="searchForm">
-    <span>🔍</span>
-    <input id="googleSearch" placeholder="Search Google or type a URL">
-    <button type="submit" aria-label="Search">➜</button>
-  </form>
-
   <div class="grid" id="grid"></div>
 </main>
 
 <input type="file" id="wallpaperFile" accept="image/*" hidden>
 
+<!-- Add / Edit dialog -->
 <div class="dialogBg" id="dialogBg">
   <div class="dialog">
     <h3 id="dialogTitle">Add Website</h3>
     <input id="siteName" placeholder="Website name">
     <input id="siteUrl" placeholder="Website URL">
-    <input id="siteIconInput" placeholder="Icon emoji (optional)">
     <div class="actions">
       <button id="cancelBtn">Cancel</button>
       <button class="primary" id="saveBtn">Save</button>
@@ -151,37 +140,94 @@ body{
   </div>
 </div>
 
+<!-- Long press options -->
+<div class="dialogBg" id="optBg">
+  <div class="dialog">
+    <h3 id="optTitle">Website</h3>
+    <div class="sheet">
+      <button id="optOpen">Open</button>
+      <button id="optEdit">Edit</button>
+      <button class="danger" id="optDelete">Remove</button>
+      <button id="optCancel">Cancel</button>
+    </div>
+  </div>
+</div>
+
 <script>
 const defaults=[
- {name:"Google",url:"https://google.com",icon:"G",color:"#4285f4"},
- {name:"Amazon",url:"https://amazon.com",icon:"a",color:"#111111"},
- {name:"Reddit",url:"https://reddit.com",icon:"👽",color:"#ffffff",textColor:"#333"},
- {name:"Vimeo",url:"https://vimeo.com",icon:"v",color:"#19a4dc"},
- {name:"Instagram",url:"https://instagram.com",icon:"📸",color:"#c13584"},
- {name:"Facebook",url:"https://facebook.com",icon:"f",color:"#3159b8"},
- {name:"Twitter",url:"https://x.com",icon:"𝕏",color:"#111111"},
- {name:"Pinterest",url:"https://pinterest.com",icon:"P",color:"#bd081c"},
- {name:"LinkedIn",url:"https://linkedin.com",icon:"in",color:"#0878a8"},
- {name:"YouTube",url:"https://youtube.com",icon:"▶",color:"#ff0033"}
+ {name:"Google",url:"https://google.com"},
+ {name:"Amazon",url:"https://amazon.com"},
+ {name:"Reddit",url:"https://reddit.com"},
+ {name:"Vimeo",url:"https://vimeo.com"},
+ {name:"Instagram",url:"https://instagram.com"},
+ {name:"Facebook",url:"https://facebook.com"},
+ {name:"Twitter",url:"https://x.com"},
+ {name:"Pinterest",url:"https://pinterest.com"},
+ {name:"LinkedIn",url:"https://linkedin.com"},
+ {name:"YouTube",url:"https://youtube.com"}
 ];
 
 function read(key,fallback){
   try{
-    const value=localStorage.getItem(key);
-    return value===null?fallback:JSON.parse(value);
+    const v=localStorage.getItem(key);
+    return v===null?fallback:JSON.parse(v);
   }catch(e){return fallback}
 }
 
 let sites=read("myBrowserSites",defaults);
 let editIndex=-1;
+let optIndex=-1;
 
 const $=id=>document.getElementById(id);
 const menu=$("menu");
 const dialogBg=$("dialogBg");
+const optBg=$("optBg");
 
 function saveSites(){
   try{localStorage.setItem("myBrowserSites",JSON.stringify(sites))}
   catch(e){alert("Storage full. Kuch websites remove karo.")}
+}
+
+function hostOf(url){
+  try{return new URL(url).hostname}catch(e){return ""}
+}
+
+const S='<svg viewBox="0 0 100 100" width="100%" height="100%" xmlns="http://www.w3.org/2000/svg">';
+const T='font-family="Arial,Helvetica,sans-serif" font-weight="bold" text-anchor="middle"';
+const LOGOS={
+ "google.com":S+'<rect width="100" height="100" fill="#fff"/><text x="50" y="72" font-size="68" '+T+' fill="#4285f4">G</text></svg>',
+ "amazon.com":S+'<rect width="100" height="100" fill="#131a22"/><text x="50" y="60" font-size="58" '+T+' fill="#fff">a</text><path d="M24 70Q50 86 76 68" stroke="#ff9900" stroke-width="6" fill="none" stroke-linecap="round"/><path d="M70 63l8 3-4 8" stroke="#ff9900" stroke-width="5" fill="none" stroke-linecap="round" stroke-linejoin="round"/></svg>',
+ "reddit.com":S+'<rect width="100" height="100" fill="#ff4500"/><ellipse cx="50" cy="58" rx="28" ry="20" fill="#fff"/><circle cx="24" cy="46" r="7" fill="#fff"/><circle cx="76" cy="46" r="7" fill="#fff"/><circle cx="39" cy="55" r="5" fill="#ff4500"/><circle cx="61" cy="55" r="5" fill="#ff4500"/><path d="M38 67Q50 76 62 67" stroke="#ff4500" stroke-width="3.5" fill="none" stroke-linecap="round"/><path d="M50 38L56 22L70 26" stroke="#fff" stroke-width="3.5" fill="none" stroke-linecap="round"/><circle cx="72" cy="26" r="6" fill="#fff"/></svg>',
+ "vimeo.com":S+'<rect width="100" height="100" fill="#1ab7ea"/><text x="50" y="72" font-size="64" '+T+' fill="#fff">v</text></svg>',
+ "instagram.com":S+'<defs><linearGradient id="ig" x1="0" y1="1" x2="1" y2="0"><stop offset="0" stop-color="#feda75"/><stop offset=".3" stop-color="#fa7e1e"/><stop offset=".55" stop-color="#d62976"/><stop offset=".8" stop-color="#962fbf"/><stop offset="1" stop-color="#4f5bd5"/></linearGradient></defs><rect width="100" height="100" fill="url(#ig)"/><rect x="24" y="24" width="52" height="52" rx="15" fill="none" stroke="#fff" stroke-width="6"/><circle cx="50" cy="50" r="12" fill="none" stroke="#fff" stroke-width="6"/><circle cx="66" cy="34" r="4" fill="#fff"/></svg>',
+ "facebook.com":S+'<rect width="100" height="100" fill="#1877f2"/><text x="56" y="100" font-size="100" '+T+' fill="#fff">f</text></svg>',
+ "x.com":S+'<rect width="100" height="100" fill="#000"/><path d="M26 24L74 76" stroke="#fff" stroke-width="8" stroke-linecap="round"/><path d="M74 24L26 76" stroke="#fff" stroke-width="5" stroke-linecap="round"/></svg>',
+ "pinterest.com":S+'<rect width="100" height="100" fill="#e60023"/><circle cx="50" cy="50" r="32" fill="#fff"/><text x="50" y="68" font-size="52" '+T+' fill="#e60023">P</text></svg>',
+ "linkedin.com":S+'<rect width="100" height="100" fill="#0a66c2"/><text x="50" y="70" font-size="52" '+T+' fill="#fff">in</text></svg>',
+ "youtube.com":S+'<rect width="100" height="100" fill="#fff"/><rect x="10" y="26" width="80" height="48" rx="14" fill="#f00"/><path d="M42 38L64 50L42 62Z" fill="#fff"/></svg>'
+};
+LOGOS["twitter.com"]=LOGOS["x.com"];
+LOGOS["youtu.be"]=LOGOS["youtube.com"];
+
+function brandLogo(url){
+  const h=hostOf(url).replace(/^www\./,"");
+  for(const k in LOGOS){
+    if(LOGOS[k]&&(h===k||h.endsWith("."+k)))return LOGOS[k];
+  }
+  return null;
+}
+
+function faviconSources(url){
+  const h=hostOf(url);
+  let origin="";
+  try{origin=new URL(url).origin}catch(e){}
+  return [
+    "https://icon.horse/icon/"+h,
+    "https://www.google.com/s2/favicons?sz=128&domain_url="+encodeURIComponent(origin),
+    "https://icons.duckduckgo.com/ip3/"+h+".ico",
+    "https://favicon.im/"+h+"?larger=true",
+    origin+"/favicon.ico"
+  ];
 }
 
 function render(){
@@ -193,15 +239,30 @@ function render(){
 
     const icon=document.createElement("span");
     icon.className="siteIcon";
-    icon.style.background=site.color||"#4285f4";
-    icon.style.color=site.textColor||"#fff";
 
-    if(site.icon && /^https?:\/\//i.test(site.icon)){
-      const img=document.createElement("img");
-      img.src=site.icon;img.alt="";
-      icon.appendChild(img);
+    const img=document.createElement("img");
+    img.alt="";
+    img.referrerPolicy="no-referrer";
+    const sources=faviconSources(site.url);
+    let si=0;
+    const next=()=>{
+      if(si>=sources.length){
+        img.remove();
+        icon.textContent=(site.name||"?").charAt(0).toUpperCase();
+        return;
+      }
+      img.src=sources[si++];
+    };
+    img.onerror=next;
+    img.onload=()=>{
+      if(img.naturalWidth<=16&&si<sources.length)next();
+    };
+    const logo=brandLogo(site.url);
+    if(logo){
+      icon.innerHTML=logo;
     }else{
-      icon.textContent=site.icon||site.name.charAt(0).toUpperCase();
+      next();
+      icon.appendChild(img);
     }
 
     const label=document.createElement("span");
@@ -209,23 +270,61 @@ function render(){
     label.textContent=site.name;
     card.append(icon,label);
 
-    card.onclick=()=>openSite(site.url);
+    // Tap = open, Long press = options
+    let timer=null,longDone=false,sx=0,sy=0;
+    const cancel=()=>{clearTimeout(timer);timer=null};
 
-    card.oncontextmenu=e=>{
+    card.addEventListener("pointerdown",e=>{
+      longDone=false;sx=e.clientX;sy=e.clientY;
+      cancel();
+      timer=setTimeout(()=>{
+        longDone=true;
+        if(navigator.vibrate)try{navigator.vibrate(30)}catch(_){}
+        showOptions(index);
+      },500);
+    });
+    card.addEventListener("pointermove",e=>{
+      if(Math.abs(e.clientX-sx)>10||Math.abs(e.clientY-sy)>10)cancel();
+    });
+    ["pointerup","pointerleave","pointercancel"].forEach(ev=>card.addEventListener(ev,cancel));
+    card.addEventListener("contextmenu",e=>{
       e.preventDefault();
-      const action=prompt(
-        site.name+"\n1 = Open\n2 = Edit\n3 = Delete"
-      );
-      if(action==="1")openSite(site.url);
-      if(action==="2")openDialog(index);
-      if(action==="3"&&confirm("Delete "+site.name+"?")){
-        sites.splice(index,1);
-        saveSites();render();
-      }
-    };
+      cancel();
+      if(!longDone){longDone=true;showOptions(index)}
+    });
+    card.addEventListener("click",e=>{
+      if(longDone){e.preventDefault();longDone=false;return}
+      openSite(site.url);
+    });
+
     $("grid").appendChild(card);
   });
 }
+
+function showOptions(index){
+  optIndex=index;
+  $("optTitle").textContent=sites[index].name;
+  optBg.classList.add("show");
+}
+
+$("optCancel").onclick=()=>optBg.classList.remove("show");
+$("optOpen").onclick=()=>{
+  optBg.classList.remove("show");
+  openSite(sites[optIndex].url);
+};
+$("optEdit").onclick=()=>{
+  optBg.classList.remove("show");
+  openDialog(optIndex);
+};
+$("optDelete").onclick=()=>{
+  const s=sites[optIndex];
+  optBg.classList.remove("show");
+  if(confirm("Remove "+s.name+"?")){
+    sites.splice(optIndex,1);
+    saveSites();render();
+  }
+};
+optBg.addEventListener("click",e=>{if(e.target===optBg)optBg.classList.remove("show")});
 
 function normalizeUrl(value){
   value=value.trim();
@@ -257,17 +356,9 @@ function searchGoogle(value){
      (/^https?:\/\//i.test(value)||/^[\w-]+\.[a-z]{2,}/i.test(value))){
     openSite(value);
   }else{
-    window.open(
-      "https://www.google.com/search?q="+encodeURIComponent(value),
-      "_blank","noopener"
-    );
+    window.open("https://www.google.com/search?q="+encodeURIComponent(value),"_blank","noopener");
   }
 }
-
-$("searchForm").onsubmit=e=>{
-  e.preventDefault();
-  searchGoogle($("googleSearch").value);
-};
 
 $("urlBar").addEventListener("keydown",e=>{
   if(e.key==="Enter"){
@@ -278,7 +369,6 @@ $("urlBar").addEventListener("keydown",e=>{
 
 $("refreshBtn").onclick=()=>{
   $("urlBar").value="";
-  $("googleSearch").value="";
   render();
 };
 
@@ -287,38 +377,26 @@ $("menuBtn").onclick=()=>menu.classList.toggle("show");
 function openDialog(index=-1){
   editIndex=index;
   $("dialogTitle").textContent=index<0?"Add Website":"Edit Website";
-  const site=index<0?{name:"",url:"",icon:""}:sites[index];
+  const site=index<0?{name:"",url:""}:sites[index];
   $("siteName").value=site.name;
   $("siteUrl").value=site.url;
-  $("siteIconInput").value=site.icon||"";
   dialogBg.classList.add("show");
   menu.classList.remove("show");
 }
 
 $("addBtn").onclick=()=>openDialog();
-
 $("cancelBtn").onclick=()=>dialogBg.classList.remove("show");
 
 $("saveBtn").onclick=()=>{
   const name=$("siteName").value.trim();
   const url=normalizeUrl($("siteUrl").value);
-  const icon=$("siteIconInput").value.trim();
-
   if(!name||!url){
     alert("Website name aur valid URL dono bharo.");
     return;
   }
-
-  const site={
-    name,
-    url,
-    icon:icon||name.charAt(0).toUpperCase(),
-    color:"#4285f4"
-  };
-
+  const site={name,url};
   if(editIndex<0)sites.push(site);
   else sites[editIndex]=site;
-
   saveSites();render();
   dialogBg.classList.remove("show");
 };
@@ -335,7 +413,6 @@ $("wallpaperFile").onchange=e=>{
     alert("Image file select karo.");
     return;
   }
-
   const reader=new FileReader();
   reader.onload=()=>{
     try{
@@ -350,20 +427,37 @@ $("wallpaperFile").onchange=e=>{
 };
 
 function applyWallpaper(data){
-  document.body.style.backgroundImage=data?
-    'url("'+data+'")':"none";
+  document.body.style.backgroundImage=data?'url("'+data+'")':"none";
   if(!data)document.body.style.backgroundColor="#f1f3f4";
 }
 
 $("resetWallpaper").onclick=()=>{
-  localStorage.removeItem("myBrowserWallpaper");
+  try{localStorage.removeItem("myBrowserWallpaper")}catch(e){}
   applyWallpaper("");
   menu.classList.remove("show");
 };
 
+// Full screen
+function goFull(){
+  const el=document.documentElement;
+  const fn=el.requestFullscreen||el.webkitRequestFullscreen||el.msRequestFullscreen;
+  if(fn&&!document.fullscreenElement&&!document.webkitFullscreenElement){
+    try{
+      const p=fn.call(el,{navigationUI:"hide"});
+      if(p&&p.catch)p.catch(()=>{});
+    }catch(e){}
+  }
+}
+$("fullBtn").onclick=()=>{menu.classList.remove("show");goFull()};
+
+let triedFull=false;
+document.addEventListener("click",()=>{
+  if(!triedFull){triedFull=true;goFull()}
+},{once:true});
+
 $("settingsBtn").onclick=()=>{
   menu.classList.remove("show");
-  alert("Websites aur wallpaper isi browser mein save hote hain.");
+  alert("Websites aur wallpaper isi browser mein save hote hain.\nWebsite ko edit/remove karne ke liye uspe long press karo.");
 };
 
 document.addEventListener("click",e=>{
@@ -372,9 +466,8 @@ document.addEventListener("click",e=>{
   }
 });
 
-applyWallpaper(localStorage.getItem("myBrowserWallpaper"));
+try{applyWallpaper(localStorage.getItem("myBrowserWallpaper"))}catch(e){}
 render();
 </script>
 </body>
   </html>
-  
