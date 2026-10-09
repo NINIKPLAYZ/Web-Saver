@@ -1,0 +1,204 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Web Saver</title>
+<style>
+*{box-sizing:border-box}
+body{margin:0;padding:18px;background:#101522;color:#fff;font-family:Arial,sans-serif}
+header{text-align:center;padding:12px}
+header h1{color:#65e5bd}
+.card{background:#1b2435;padding:16px;border-radius:14px;margin:15px 0}
+input,textarea,button{width:100%;padding:12px;margin:7px 0;border:0;border-radius:8px;font-size:15px}
+input,textarea{background:#293449;color:white}
+button{background:#65e5bd;color:#101522;font-weight:bold;cursor:pointer}
+.secondary{background:#35435c;color:white}
+.danger{background:#a93f50;color:white}
+.item{background:#263248;padding:13px;border-radius:10px;margin:12px 0;overflow-wrap:anywhere}
+.item a{color:#65e5bd}
+.small{font-size:13px;color:#bdc6d8}
+pre{white-space:pre-wrap;overflow-wrap:anywhere;font-family:Arial,sans-serif}
+</style>
+</head>
+<body>
+
+<header>
+<h1>🌐 Web Saver</h1>
+<p>Save websites and read saved text offline</p>
+</header>
+
+<section class="card">
+<h2>➕ Add Website</h2>
+<input id="siteName" placeholder="Website name">
+<input id="siteUrl" placeholder="https://example.com">
+<button id="addSite">Save Website</button>
+</section>
+
+<section class="card">
+<h2>📥 Save Text Offline</h2>
+<p class="small">Copy website text and paste it below.</p>
+<input id="textTitle" placeholder="Content title">
+<textarea id="textContent" rows="5" placeholder="Paste website text here"></textarea>
+<button id="addText">Save Offline Text</button>
+</section>
+
+<section class="card">
+<h2>📚 My Saved Items</h2>
+<input id="search" placeholder="🔍 Search saved items">
+<div id="list"></div>
+</section>
+
+<p class="small">Saved data is stored on this device in your browser. Clearing browser data may remove it.</p>
+
+<script>
+"use strict";
+
+const KEY = "web_saver_v1";
+
+function getItems(){
+  try {
+    const x = JSON.parse(localStorage.getItem(KEY) || "[]");
+    return Array.isArray(x) ? x : [];
+  } catch(e) { return []; }
+}
+
+function putItems(items){
+  try {
+    localStorage.setItem(KEY, JSON.stringify(items));
+    return true;
+  } catch(e) {
+    alert("Storage full hai ya available nahi hai.");
+    return false;
+  }
+}
+
+function makeId(){
+  return Date.now().toString(36) + Math.random().toString(36).slice(2);
+}
+
+document.getElementById("addSite").onclick = function(){
+  const name = document.getElementById("siteName").value.trim();
+  let url = document.getElementById("siteUrl").value.trim();
+
+  if(!name || !url){
+    alert("Website name aur link bharo.");
+    return;
+  }
+
+  if(!/^https?:\/\//i.test(url)) url = "https://" + url;
+
+  try {
+    const u = new URL(url);
+    if(!["https:","http:"].includes(u.protocol)) throw Error();
+    url = u.href;
+  } catch(e) {
+    alert("Valid website URL daalo.");
+    return;
+  }
+
+  const items = getItems();
+  items.unshift({id:makeId(),type:"site",name,url});
+  if(putItems(items)){
+    document.getElementById("siteName").value = "";
+    document.getElementById("siteUrl").value = "";
+    render();
+  }
+};
+
+document.getElementById("addText").onclick = function(){
+  const name = document.getElementById("textTitle").value.trim();
+  const content = document.getElementById("textContent").value.trim();
+
+  if(!name || !content){
+    alert("Title aur text dono bharo.");
+    return;
+  }
+
+  const items = getItems();
+  items.unshift({id:makeId(),type:"text",name,content});
+  if(putItems(items)){
+    document.getElementById("textTitle").value = "";
+    document.getElementById("textContent").value = "";
+    render();
+    alert("Text offline save ho gaya!");
+  }
+};
+
+function makeButton(label, cls, callback){
+  const b = document.createElement("button");
+  b.textContent = label;
+  b.className = cls || "secondary";
+  b.onclick = callback;
+  return b;
+}
+
+function render(){
+  const query = document.getElementById("search").value.toLowerCase();
+  const list = document.getElementById("list");
+  list.replaceChildren();
+
+  const items = getItems().filter(x =>
+    x.name.toLowerCase().includes(query) ||
+    (x.url || "").toLowerCase().includes(query) ||
+    (x.content || "").toLowerCase().includes(query)
+  );
+
+  if(items.length === 0){
+    list.textContent = "Koi saved item nahi mila.";
+    return;
+  }
+
+  items.forEach(item => {
+    const card = document.createElement("div");
+    card.className = "item";
+
+    const title = document.createElement("h3");
+    title.textContent = (item.type === "site" ? "🌐 " : "📄 ") + item.name;
+    card.appendChild(title);
+
+    if(item.type === "site"){
+      const link = document.createElement("a");
+      link.href = item.url;
+      link.target = "_blank";
+      link.rel = "noopener noreferrer";
+      link.textContent = item.url;
+      card.appendChild(link);
+      card.appendChild(makeButton("Open Website", "", () => {
+        window.open(item.url, "_blank", "noopener,noreferrer");
+      }));
+    } else {
+      const preview = document.createElement("pre");
+      preview.textContent = item.content;
+      preview.hidden = true;
+      card.appendChild(preview);
+      card.appendChild(makeButton("Read Saved Text", "", () => {
+        preview.hidden = !preview.hidden;
+      }));
+      card.appendChild(makeButton("Copy Text", "secondary", async () => {
+        try {
+          await navigator.clipboard.writeText(item.content);
+          alert("Text copied!");
+        } catch(e) {
+          alert("Copy support nahi hua. Text select karke copy karo.");
+        }
+      }));
+    }
+
+    card.appendChild(makeButton("Delete", "danger", () => {
+      if(confirm("Is item ko delete karein?")){
+        putItems(getItems().filter(x => x.id !== item.id));
+        render();
+      }
+    }));
+
+    list.appendChild(card);
+  });
+}
+
+document.getElementById("search").addEventListener("input", render);
+render();
+</script>
+</body>
+</html>
